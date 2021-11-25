@@ -25,13 +25,13 @@ public:
     Variable();
     Variable(std::vector<double> data);
 
-    const std::vector<double>& Get_Data() const;
-    double Get_Medium();
-    double Get_Dispersion();
-    double Get_Minimum();
-    double Get_Maximum();
-    double Get_Summ();
-    size_t Get_Size();
+    const std::vector<double>& GetData() const;
+    double GetMedium();
+    double GetDispersion();
+    double GetMinimum();
+    double GetMaximum();
+    double GetSumm();
+    size_t GetSize();
 
     friend DoubleVariable;
 };
@@ -49,27 +49,27 @@ public:
     DoubleVariable(std::vector<double> data_x, std::vector<double> data_y);
     DoubleVariable(Variable* x, Variable* y);
 
-    const std::vector<double>& Get_Data_x() const;
-    double Get_Medium_x();
-    double Get_Dispersion_x();
-    double Get_Minimum_x();
-    double Get_Maximum_x();
-    double Get_Summ_x();
+    const std::vector<double>& GetDataX() const;
+    double GetMediumX();
+    double GetDispersionX();
+    double GetMinimumX();
+    double GetMaximumX();
+    double GetSummX();
 
-    const std::vector<double>& Get_Data_y() const;
-    double Get_Medium_y();
-    double Get_Dispersion_y();
-    double Get_Minimum_y();
-    double Get_Maximum_y();
-    double Get_Summ_y();
+    const std::vector<double>& GetDataY() const;
+    double GetMediumY();
+    double GetDispersionY();
+    double GetMinimumY();
+    double GetMaximumY();
+    double GetSummY();
 
-    size_t Get_Size();
-    double Get_Covariance();
-    double Get_Correlation();
-    double Get_a();
-    double Get_b();
-    double Get_a_error();
-    double Get_b_error();
+    size_t GetSize();
+    double GetCovariance();
+    double GetCorrelation();
+    double GetA();
+    double GetB();
+    double GetAError();
+    double GetBError();
 };
 
 double Medium(const std::vector<double>& data){
@@ -148,11 +148,11 @@ Variable::Variable(std::vector<double> data) : data(data){
     summ.first = false;
 }
 
-const std::vector<double>&Variable::Get_Data() const{
+const std::vector<double>&Variable::GetData() const{
     return data;
 }
 
-double Variable::Get_Medium(){
+double Variable::GetMedium(){
     if(medium.first) return medium.second;
     if(summ.first){
         medium.second = summ.second / size;
@@ -170,28 +170,28 @@ double Variable::Get_Medium(){
     return medium.second;
 }
 
-double Variable::Get_Dispersion(){
+double Variable::GetDispersion(){
     if(dispersion.first) return dispersion.second;
     dispersion.second = Dispersion(data);
     dispersion.first = true;
     return dispersion.second;
 }
 
-double Variable::Get_Maximum(){
+double Variable::GetMaximum(){
     if(maximum.first) return maximum.second;
     maximum.second = Maximum(data);
     maximum.first = true;
     return maximum.second;
 }
 
-double Variable::Get_Minimum(){
+double Variable::GetMinimum(){
     if(minimum.first) return minimum.second;
     minimum.second = Minimum(data);
     minimum.first = true;
     return minimum.second;
 }
 
-double Variable::Get_Summ(){
+double Variable::GetSumm(){
     if(summ.first) return summ.second;
     summ.second = 0;
     auto i = data.begin();
@@ -202,7 +202,7 @@ double Variable::Get_Summ(){
     return summ.second;
 }
 
-size_t Variable::Get_Size(){
+size_t Variable::GetSize(){
     return size;
 }
 
@@ -234,98 +234,98 @@ DoubleVariable::DoubleVariable(std::vector<double> data_x, std::vector<double> d
     }
 }
 
-const std::vector<double>&DoubleVariable::Get_Data_x() const{
-    return x->Get_Data();
+const std::vector<double>&DoubleVariable::GetDataX() const{
+    return x->GetData();
 }
 
-double DoubleVariable::Get_Medium_x(){
-    return x->Get_Medium();
+double DoubleVariable::GetMediumX(){
+    return x->GetMedium();
 }
 
-double DoubleVariable::Get_Dispersion_x(){
-    return x->Get_Dispersion();
+double DoubleVariable::GetDispersionX(){
+    return x->GetDispersion();
 }
 
-double DoubleVariable::Get_Maximum_x(){
-    return x->Get_Maximum();
+double DoubleVariable::GetMaximumX(){
+    return x->GetMaximum();
 }
 
-double DoubleVariable::Get_Minimum_x(){
-    return x->Get_Minimum();
+double DoubleVariable::GetMinimumX(){
+    return x->GetMinimum();
 }
 
-double DoubleVariable::Get_Summ_x(){
-    return x->Get_Summ();
+double DoubleVariable::GetSummX(){
+    return x->GetSumm();
 }
 
-const std::vector<double>&DoubleVariable::Get_Data_y() const{
-    return y->Get_Data();
+const std::vector<double>&DoubleVariable::GetDataY() const{
+    return y->GetData();
 }
 
-double DoubleVariable::Get_Medium_y(){
-    return y->Get_Medium();
+double DoubleVariable::GetMediumY(){
+    return y->GetMedium();
 }
 
-double DoubleVariable::Get_Dispersion_y(){
-    return y->Get_Dispersion();
+double DoubleVariable::GetDispersionY(){
+    return y->GetDispersion();
 }
 
-double DoubleVariable::Get_Maximum_y(){
-    return y->Get_Maximum();
+double DoubleVariable::GetMaximumY(){
+    return y->GetMaximum();
 }
 
-double DoubleVariable::Get_Minimum_y(){
-    return y->Get_Minimum();
+double DoubleVariable::GetMinimumY(){
+    return y->GetMinimum();
 }
 
-double DoubleVariable::Get_Summ_y(){
-    return y->Get_Summ();
+double DoubleVariable::GetSummY(){
+    return y->GetSumm();
 }
 
-size_t DoubleVariable::Get_Size(){
+size_t DoubleVariable::GetSize(){
     return size;
 }
 
-double DoubleVariable::Get_Correlation(){
+double DoubleVariable::GetCorrelation(){
     if(correlation.first) return correlation.second;
-    correlation.second = Correlation(x->Get_Data(), y->Get_Data());
+    correlation.second = Correlation(x->GetData(), y->GetData());
     correlation.first = true;
     return correlation.second;
 }
 
-double DoubleVariable::Get_Covariance(){
+double DoubleVariable::GetCovariance(){
     if(covariance.first) return covariance.second;
-    covariance.second = Covariance(x->Get_Data(), y->Get_Data());
+    covariance.second = Covariance(x->GetData(), y->GetData());
     covariance.first = true;
     return covariance.second;
 }
 
-double DoubleVariable::Get_a(){
+double DoubleVariable::GetA(){
     if(a.first) return a.second;
-    a.second = Get_Covariance() / Get_Dispersion_x();
+    a.second = GetCovariance() / GetDispersionX();
     a.first = true;
     return a.second;
 }
 
-double DoubleVariable::Get_b(){
+double DoubleVariable::GetB(){
     if(b.first) return b.second;
-    b.second = Get_Medium_y() - Get_a()*Get_Medium_x();
+    b.second = GetMediumY() - GetA()*GetMediumX();
     b.first = true;
     return b.second;
 }
 
-double DoubleVariable::Get_a_error(){
+double DoubleVariable::GetAError(){
     if(a_err.first) return a_err.second;
-    double q = Get_Dispersion_y() / Get_Dispersion_x() - Get_a()*Get_a();
+    double q = GetDispersionY() / GetDispersionX() - GetA()*GetA();
     if(q < 0) a_err.second = 0;
     else a_err.second = std::sqrt(q) / std::sqrt(size);
     a_err.first = true;
     return a_err.second;
 }
 
-double DoubleVariable::Get_b_error(){
+double DoubleVariable::GetBError(){
     if(b_err.first) return b_err.second;
-    b_err.second = Get_a_error() * std::sqrt(Get_Dispersion_x());
+    b_err.second = GetAError() * std::sqrt(GetDispersionX());
     b_err.first = true;
     return b_err.second;
 }
