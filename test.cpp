@@ -38,7 +38,6 @@ void quit() {
 
 int main (int arhc, char ** argv) {
 
-
      if (!init()) {
         quit();
         system("pause");
@@ -49,7 +48,7 @@ int main (int arhc, char ** argv) {
     SDL_RenderClear(ren);
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
-    DrawGraphic(ren, {1, 3, 5, 7}, {1, 3, 5, 7});
+    DrawGraphic(ren, {1129, 1141, 1153, 1167}, {1, 3, 5, 7});
 
     SDL_RenderPresent(ren);
 
