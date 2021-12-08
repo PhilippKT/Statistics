@@ -45,7 +45,7 @@ private:
     Segment Partition(uint32_t l, uint32_t r){
         uint32_t support_i = l + rand() % (r - l + 1);
         double support_el = data[support_i];
-        uint32_t col = 0; // Количество опорных элементов минус 1.
+        uint32_t col = 0; // ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г®ГЇГ®Г°Г­Г»Гµ ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¬ГЁГ­ГіГ± 1.
         while(l < r){
             while ( cmp(data[l], support_el) and (data[l] != support_el) ){
                 l++;
@@ -56,14 +56,14 @@ private:
             if (l == r){
                 break;
             }
-            if (data[l] == data[r]){ // Это возможно только в случае data[l] == data[r] == support_el.
-                col++;  //  /Операция сдвига влево. (просто игнорируем элементы == support_el) (у нас l < r)
-                r--;    //  \В конце мы получим разбитый массив; в левой части от опорного элемента(support_el) элементы будут > support_el; в правой части -- <= support_el.
+            if (data[l] == data[r]){ // ГќГІГ® ГўГ®Г§Г¬Г®Г¦Г­Г® ГІГ®Г«ГјГЄГ® Гў Г±Г«ГіГ·Г ГҐ data[l] == data[r] == support_el.
+                col++;  //  /ГЋГЇГҐГ°Г Г¶ГЁГї Г±Г¤ГўГЁГЈГ  ГўГ«ГҐГўГ®. (ГЇГ°Г®Г±ГІГ® ГЁГЈГ­Г®Г°ГЁГ°ГіГҐГ¬ ГЅГ«ГҐГ¬ГҐГ­ГІГ» == support_el) (Гі Г­Г Г± l < r)
+                r--;    //  \Г‚ ГЄГ®Г­Г¶ГҐ Г¬Г» ГЇГ®Г«ГіГ·ГЁГ¬ Г°Г Г§ГЎГЁГІГ»Г© Г¬Г Г±Г±ГЁГў; Гў Г«ГҐГўГ®Г© Г·Г Г±ГІГЁ Г®ГІ Г®ГЇГ®Г°Г­Г®ГЈГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ (support_el) ГЅГ«ГҐГ¬ГҐГ­ГІГ» ГЎГіГ¤ГіГІ > support_el; Гў ГЇГ°Г ГўГ®Г© Г·Г Г±ГІГЁ -- <= support_el.
             } else{
                 std::swap(data[l], data[r]);
             }
         }
-        return Segment(l + 1, l + 1 + col);  //  Выражено через l, т.к. сдвигали влево. ((l+1) - наименьшая статистика опорного элемента, если он не единственный; (l+1+col) -- наибольшая)
+        return Segment(l + 1, l + 1 + col);  //  Г‚Г»Г°Г Г¦ГҐГ­Г® Г·ГҐГ°ГҐГ§ l, ГІ.ГЄ. Г±Г¤ГўГЁГЈГ Г«ГЁ ГўГ«ГҐГўГ®. ((l+1) - Г­Г ГЁГ¬ГҐГ­ГјГёГ Гї Г±ГІГ ГІГЁГ±ГІГЁГЄГ  Г®ГЇГ®Г°Г­Г®ГЈГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ , ГҐГ±Г«ГЁ Г®Г­ Г­ГҐ ГҐГ¤ГЁГ­Г±ГІГўГҐГ­Г­Г»Г©; (l+1+col) -- Г­Г ГЁГЎГ®Г«ГјГёГ Гї)
     }
 public:
     Selecter(){};
@@ -91,26 +91,27 @@ class Variable{
 private:
     size_t size;
     std::vector<double> data;
-    std::pair<bool, double> medium;
-    std::pair<bool, double> dispersion;
-    std::pair<bool, double> minimum;
-    std::pair<bool, double> maximum;
-    std::pair<bool, double> summ;
+    mutable std::pair<bool, double> medium;
+    mutable std::pair<bool, double> dispersion;
+    mutable std::pair<bool, double> minimum;
+    mutable std::pair<bool, double> maximum;
+    mutable std::pair<bool, double> sum;
 public:
     Variable();
-    Variable(std::vector<double> data);
+    Variable(const std::vector<double>& data);
 
     const std::vector<double>& GetData() const;
     std::vector<double> GetSortedUpData() const;
     std::vector<double> GetSortedDownData() const;
-    double GetAscendingOrderStatistic(int32_t k); // k-ая порядковая статистика по возрастанию (начиная с 1)
-    double GetDescendingOrderStatistic(int32_t k); // k-ая порядковая статистика по убыванию (начиная с 1)
-    double GetMedium();
-    double GetDispersion();
-    double GetMinimum();
-    double GetMaximum();
-    double GetSumm();
-    size_t GetSize();
+    double GetAscendingOrderStatistic(int32_t k); // k-Г Гї ГЇГ®Г°ГїГ¤ГЄГ®ГўГ Гї Г±ГІГ ГІГЁГ±ГІГЁГЄГ  ГЇГ® ГўГ®Г§Г°Г Г±ГІГ Г­ГЁГѕ (Г­Г Г·ГЁГ­Г Гї Г± 1)
+    double GetDescendingOrderStatistic(int32_t k); // k-Г Гї ГЇГ®Г°ГїГ¤ГЄГ®ГўГ Гї Г±ГІГ ГІГЁГ±ГІГЁГЄГ  ГЇГ® ГіГЎГ»ГўГ Г­ГЁГѕ (Г­Г Г·ГЁГ­Г Гї Г± 1)
+  
+    double GetMedium() const;
+    double GetDispersion() const;
+    double GetMinimum() const;
+    double GetMaximum() const;
+    double GetSum() const;
+    size_t GetSize() const;
 
     friend DoubleVariable;
 };
@@ -119,44 +120,38 @@ class DoubleVariable{
     Variable* x;
     Variable* y;
     size_t size;
-    std::pair<bool, double> covariance;
-    std::pair<bool, double> correlation;
-    std::pair<bool, double> a, b; // коэффициенты в линейном приближении y = a*x + b
-    std::pair<bool, double> a_err, b_err; // их погрешности
+    mutable std::pair<bool, double> covariance;
+    mutable std::pair<bool, double> correlation;
+    mutable std::pair<bool, double> a, b; // ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» Гў Г«ГЁГ­ГҐГ©Г­Г®Г¬ ГЇГ°ГЁГЎГ«ГЁГ¦ГҐГ­ГЁГЁ y = a*x + b
+    mutable std::pair<bool, double> a_err, b_err; // ГЁГµ ГЇГ®ГЈГ°ГҐГёГ­Г®Г±ГІГЁ
 public:
     DoubleVariable();
-    DoubleVariable(std::vector<double> data_x, std::vector<double> data_y);
+    DoubleVariable(const std::vector<double>& data_x, const std::vector<double>& data_y);
     DoubleVariable(Variable* x, Variable* y);
 
     const std::vector<double>& GetDataX() const;
     std::vector<double> GetSortedUpDataX() const;
     std::vector<double> GetSortedDownDataX() const;
-    double GetMediumX();
-    double GetDispersionX();
-    double GetMinimumX();
-    double GetMaximumX();
-    double GetSummX();
-    double GetAscendingOrderStatisticX(int32_t k);
-    double GetDescendingOrderStatisticX(int32_t k);
+    double GetMediumX() const;
+    double GetDispersionX() const;
+    double GetMinimumX() const;
+    double GetMaximumX() const;
+    double GetSumX() const;
 
     const std::vector<double>& GetDataY() const;
-    std::vector<double> GetSortedUpDataY() const;
-    std::vector<double> GetSortedDownDataY() const;
-    double GetMediumY();
-    double GetDispersionY();
-    double GetMinimumY();
-    double GetMaximumY();
-    double GetSummY();
-    double GetAscendingOrderStatisticY(int32_t k);
-    double GetDescendingOrderStatisticY(int32_t k);
+    double GetMediumY() const;
+    double GetDispersionY() const;
+    double GetMinimumY() const;
+    double GetMaximumY() const;
+    double GetSumY() const;
 
-    size_t GetSize();
-    double GetCovariance();
-    double GetCorrelation();
-    double GetA();
-    double GetB();
-    double GetAError();
-    double GetBError();
+    size_t GetSize() const;
+    double GetCovariance() const;
+    double GetCorrelation() const;
+    double GetA() const;
+    double GetB() const;
+    double GetAError() const;
+    double GetBError() const;
 };
 
 double Medium(const std::vector<double>& data){
@@ -222,16 +217,16 @@ Variable::Variable(){
     dispersion.first = false;
     minimum.first = false;
     maximum.first = false;
-    summ.first = false;
+    sum.first = false;
 }
 
-Variable::Variable(std::vector<double> data) : data(data){
+Variable::Variable(const std::vector<double>& data) : data(data){
     size = data.size();
     medium.first = false;
     dispersion.first = false;
     minimum.first = false;
     maximum.first = false;
-    summ.first = false;
+    sum.first = false;
 }
 
 const std::vector<double>&Variable::GetData() const{
@@ -250,69 +245,69 @@ std::vector<double> Variable::GetSortedDownData() const{
     return v;
 }
 
-double Variable::GetAscendingOrderStatistic(int32_t k){  // k-ая порядковая статистика по возрастанию (начиная с 1)
+double Variable::GetAscendingOrderStatistic(int32_t k){  // k-Г Гї ГЇГ®Г°ГїГ¤ГЄГ®ГўГ Гї Г±ГІГ ГІГЁГ±ГІГЁГЄГ  ГЇГ® ГўГ®Г§Г°Г Г±ГІГ Г­ГЁГѕ (Г­Г Г·ГЁГ­Г Гї Г± 1)
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
     Selecter<std::less<double>> up(data);
     return up.QuickSelect(k);
 }
 
-double Variable::GetDescendingOrderStatistic(int32_t k){  // k-ая порядковая статистика по убыванию (начиная с 1)
+double Variable::GetDescendingOrderStatistic(int32_t k){  // k-Г Гї ГЇГ®Г°ГїГ¤ГЄГ®ГўГ Гї Г±ГІГ ГІГЁГ±ГІГЁГЄГ  ГЇГ® ГіГЎГ»ГўГ Г­ГЁГѕ (Г­Г Г·ГЁГ­Г Гї Г± 1)
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
     Selecter<std::greater<double>> down(data);
     return down.QuickSelect(k);;
 }
 
-double Variable::GetMedium(){
+double Variable::GetMedium() const{
     if(medium.first) return medium.second;
-    if(summ.first){
-        medium.second = summ.second / size;
+    if(sum.first){
+        medium.second = sum.second / size;
         medium.first = true;
         return medium.second;
     }
-    summ.second = 0;
+    sum.second = 0;
     auto i = data.begin();
     auto en = data.end();
     for(;i != en; ++i)
-        summ.second += *i;
-    summ.first = true;
-    medium.second = summ.second / size;
+        sum.second += *i;
+    sum.first = true;
+    medium.second = sum.second / size;
     medium.first = true;
     return medium.second;
 }
 
-double Variable::GetDispersion(){
+double Variable::GetDispersion() const{
     if(dispersion.first) return dispersion.second;
     dispersion.second = Dispersion(data);
     dispersion.first = true;
     return dispersion.second;
 }
 
-double Variable::GetMaximum(){
+double Variable::GetMaximum() const{
     if(maximum.first) return maximum.second;
     maximum.second = Maximum(data);
     maximum.first = true;
     return maximum.second;
 }
 
-double Variable::GetMinimum(){
+double Variable::GetMinimum() const{
     if(minimum.first) return minimum.second;
     minimum.second = Minimum(data);
     minimum.first = true;
     return minimum.second;
 }
 
-double Variable::GetSumm(){
-    if(summ.first) return summ.second;
-    summ.second = 0;
+double Variable::GetSum() const{
+    if(sum.first) return sum.second;
+    sum.second = 0;
     auto i = data.begin();
     auto en = data.end();
     for(;i != en; ++i)
-        summ.second += *i;
-    summ.first = true;
-    return summ.second;
+        sum.second += *i;
+    sum.first = true;
+    return sum.second;
 }
 
-size_t Variable::GetSize(){
+size_t Variable::GetSize() const{
     return size;
 }
 
@@ -333,7 +328,7 @@ DoubleVariable::DoubleVariable(Variable* x1, Variable* x2){
     }
 }
 
-DoubleVariable::DoubleVariable(std::vector<double> data_x, std::vector<double> data_y){
+DoubleVariable::DoubleVariable(const std::vector<double>& data_x, const std::vector<double>& data_y){
     if(data_x.size() != data_y.size()) throw std::runtime_error("Size of data_x != size of data_y");
     else{
         x = new Variable(data_x);
@@ -356,24 +351,24 @@ std::vector<double> DoubleVariable::GetSortedDownDataX() const{
     return x->GetSortedDownData();
 }
 
-double DoubleVariable::GetMediumX(){
+double DoubleVariable::GetMediumX() const{
     return x->GetMedium();
 }
 
-double DoubleVariable::GetDispersionX(){
+double DoubleVariable::GetDispersionX() const{
     return x->GetDispersion();
 }
 
-double DoubleVariable::GetMaximumX(){
+double DoubleVariable::GetMaximumX() const{
     return x->GetMaximum();
 }
 
-double DoubleVariable::GetMinimumX(){
+double DoubleVariable::GetMinimumX() const{
     return x->GetMinimum();
 }
 
-double DoubleVariable::GetSummX(){
-    return x->GetSumm();
+double DoubleVariable::GetSumX() const{
+    return x->GetSum();
 }
 
 double DoubleVariable::GetAscendingOrderStatisticX(int32_t k){
@@ -396,24 +391,25 @@ std::vector<double> DoubleVariable::GetSortedDownDataY() const{
     return y->GetSortedDownData();
 }
 
-double DoubleVariable::GetMediumY(){
+
+double DoubleVariable::GetMediumY() const{
     return y->GetMedium();
 }
 
-double DoubleVariable::GetDispersionY(){
+double DoubleVariable::GetDispersionY() const{
     return y->GetDispersion();
 }
 
-double DoubleVariable::GetMaximumY(){
+double DoubleVariable::GetMaximumY() const{
     return y->GetMaximum();
 }
 
-double DoubleVariable::GetMinimumY(){
+double DoubleVariable::GetMinimumY() const{
     return y->GetMinimum();
 }
 
-double DoubleVariable::GetSummY(){
-    return y->GetSumm();
+double DoubleVariable::GetSumY() const{
+    return y->GetSum();
 }
 
 double DoubleVariable::GetAscendingOrderStatisticY(int32_t k){
@@ -424,39 +420,39 @@ double DoubleVariable::GetDescendingOrderStatisticY(int32_t k){
     return y->GetDescendingOrderStatistic(k);
 }
 
-size_t DoubleVariable::GetSize(){
+size_t DoubleVariable::GetSize() const{
     return size;
 }
 
-double DoubleVariable::GetCorrelation(){
+double DoubleVariable::GetCorrelation() const{
     if(correlation.first) return correlation.second;
     correlation.second = Correlation(x->GetData(), y->GetData());
     correlation.first = true;
     return correlation.second;
 }
 
-double DoubleVariable::GetCovariance(){
+double DoubleVariable::GetCovariance() const{
     if(covariance.first) return covariance.second;
     covariance.second = Covariance(x->GetData(), y->GetData());
     covariance.first = true;
     return covariance.second;
 }
 
-double DoubleVariable::GetA(){
+double DoubleVariable::GetA() const{
     if(a.first) return a.second;
     a.second = GetCovariance() / GetDispersionX();
     a.first = true;
     return a.second;
 }
 
-double DoubleVariable::GetB(){
+double DoubleVariable::GetB() const{
     if(b.first) return b.second;
     b.second = GetMediumY() - GetA()*GetMediumX();
     b.first = true;
     return b.second;
 }
 
-double DoubleVariable::GetAError(){
+double DoubleVariable::GetAError() const{
     if(a_err.first) return a_err.second;
     double q = GetDispersionY() / GetDispersionX() - GetA()*GetA();
     if(q < 0) a_err.second = 0;
@@ -465,7 +461,7 @@ double DoubleVariable::GetAError(){
     return a_err.second;
 }
 
-double DoubleVariable::GetBError(){
+double DoubleVariable::GetBError() const{
     if(b_err.first) return b_err.second;
     b_err.second = GetAError() * std::sqrt(GetDispersionX());
     b_err.first = true;
