@@ -19,7 +19,30 @@ void DrawGraphic(SDL_Renderer* ren, const std::vector<double>& data_x, const std
                   const std::string & x_name, const std::string & y_name, const std::string &name = "", bool spln = 0);
 void DrawLine(SDL_Renderer* ren, const std::vector<double>& data_x, const std::vector<double>& data_y, double scale_factor_x,
                double scale_factor_y, double x1, double y1); // рисует сглаживающую кривую
+bool init();
+void quit();
 
+
+SDL_Window *win = NULL;
+SDL_Renderer *ren = NULL;
+
+bool init(){
+    bool ok = true;
+    TTF_Init();
+    win = SDL_CreateWindow("Graphic", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    return ok;
+}
+
+void quit(){
+    SDL_DestroyWindow(win);
+    win = NULL;
+
+    SDL_DestroyRenderer(ren);
+    ren = NULL;
+
+    SDL_Quit;
+}
 
 void RenderTexture(SDL_Texture *tex, SDL_Renderer *ren, SDL_Rect dst, SDL_Rect *clip){
 	SDL_RenderCopy(ren, tex, clip, &dst);
