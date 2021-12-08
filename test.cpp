@@ -7,12 +7,12 @@ SDL_Renderer *ren = NULL;
 
 bool init() {
     bool ok = true;
-
+    TTF_Init();
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cout << "Can't init SDL: " << SDL_GetError() << std::endl;
     }
 
-    win = SDL_CreateWindow("Примитивы", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    win = SDL_CreateWindow("Graphic", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (win == NULL) {
         std::cout << "Can't create window: " << SDL_GetError() << std::endl;
         ok = false;
@@ -48,7 +48,8 @@ int main (int arhc, char ** argv) {
     SDL_RenderClear(ren);
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
-    DrawGraphic(ren, {1129, 1141, 1153, 1167}, {1, 3, 5, 7});
+    DrawGraphic(ren, {1129, 1141, 1153, 1167}, {39, 48, 54, 72}, "B, Gs", "H, Gs", "Graphic H(B)");
+
 
     SDL_RenderPresent(ren);
 
