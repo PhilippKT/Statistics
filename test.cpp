@@ -1,4 +1,4 @@
-
+#include "spline.hpp"
 #include"draw.hpp"
 
 
@@ -48,7 +48,7 @@ int main (int arhc, char ** argv) {
     SDL_RenderClear(ren);
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
-    DrawGraphic(ren, {1129, 1141, 1153, 1167}, {39, 48, 54, 72}, "B, Gs", "H, Gs", "Graphic H(B)");
+    DrawGraphic(ren, {1110, 1129, 1141, 1153, 1167, 1188}, {38, 49, 39, 48, 54, 72}, "B, Gs", "H, Gs", "Graphic H(B)", 1);
 
 
     SDL_RenderPresent(ren);
