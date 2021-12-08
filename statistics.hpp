@@ -103,9 +103,9 @@ public:
     const std::vector<double>& GetData() const;
     std::vector<double> GetSortedUpData() const;
     std::vector<double> GetSortedDownData() const;
-    double GetAscendingOrderStatistic(int32_t k); // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
-    double GetDescendingOrderStatistic(int32_t k); // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
-  
+    double GetAscendingOrderStatistic(int32_t k) const; // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
+    double GetDescendingOrderStatistic(int32_t k)const; // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
+
     double GetMedium() const;
     double GetDispersion() const;
     double GetMinimum() const;
@@ -132,11 +132,17 @@ public:
     const std::vector<double>& GetDataX() const;
     std::vector<double> GetSortedUpDataX() const;
     std::vector<double> GetSortedDownDataX() const;
+    std::vector<double> GetSortedUpDataY() const;
+    std::vector<double> GetSortedDownDataY() const;
+    double GetAscendingOrderStatisticX(int32_t k)const;
+    double GetDescendingOrderStatisticX(int32_t k) const;
     double GetMediumX() const;
     double GetDispersionX() const;
     double GetMinimumX() const;
     double GetMaximumX() const;
     double GetSumX() const;
+    double GetAscendingOrderStatisticY(int32_t k) const;
+    double GetDescendingOrderStatisticY(int32_t k) const;
 
     const std::vector<double>& GetDataY() const;
     double GetMediumY() const;
@@ -245,13 +251,13 @@ std::vector<double> Variable::GetSortedDownData() const{
     return v;
 }
 
-double Variable::GetAscendingOrderStatistic(int32_t k){  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
+double Variable::GetAscendingOrderStatistic(int32_t k) const{  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
     Selecter<std::less<double>> up(data);
     return up.QuickSelect(k);
 }
 
-double Variable::GetDescendingOrderStatistic(int32_t k){  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
+double Variable::GetDescendingOrderStatistic(int32_t k) const{  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
     Selecter<std::greater<double>> down(data);
     return down.QuickSelect(k);;
@@ -371,11 +377,11 @@ double DoubleVariable::GetSumX() const{
     return x->GetSum();
 }
 
-double DoubleVariable::GetAscendingOrderStatisticX(int32_t k){
+double DoubleVariable::GetAscendingOrderStatisticX(int32_t k) const{
     return x->GetAscendingOrderStatistic(k);
 }
 
-double DoubleVariable::GetDescendingOrderStatisticX(int32_t k){
+double DoubleVariable::GetDescendingOrderStatisticX(int32_t k) const{
     return x->GetDescendingOrderStatistic(k);
 }
 
@@ -412,11 +418,11 @@ double DoubleVariable::GetSumY() const{
     return y->GetSum();
 }
 
-double DoubleVariable::GetAscendingOrderStatisticY(int32_t k){
+double DoubleVariable::GetAscendingOrderStatisticY(int32_t k) const{
     return y->GetAscendingOrderStatistic(k);
 }
 
-double DoubleVariable::GetDescendingOrderStatisticY(int32_t k){
+double DoubleVariable::GetDescendingOrderStatisticY(int32_t k) const{
     return y->GetDescendingOrderStatistic(k);
 }
 
