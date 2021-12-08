@@ -3,7 +3,6 @@
 #include"statistics.hpp"
 #include<string>
 
-// масштаб:работаем логарифмом и rand() - округлением, для минимума и разности минимума и максимума
 
 int SCREEN_WIDTH = 720;
 int SCREEN_HEIGHT = 480;
@@ -40,11 +39,8 @@ void RenderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, SDL_Rect *
 
 
 SDL_Texture* RenderText(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer){
-	//Open the font
 	TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
-
 	SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
-
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
 
 	SDL_FreeSurface(surf);
@@ -83,11 +79,11 @@ void DrawCoord(SDL_Renderer* ren, int x0, int y0, int x_div, int y_div, const st
 
     if(x0_str == y0_str) RenderTexture(RenderText(x0_str, "BaskervilleBoldItalic.ttf", color, 24, ren), ren, x0 - 15, y0);
     else{
-        RenderTexture(RenderText(x0_str, "BaskervilleBoldItalic.ttf", color, 24, ren), ren, x0 + 5, y0);
-        RenderTexture(RenderText(y0_str, "BaskervilleBoldItalic.ttf", color, 24, ren), ren, x0 - 15, y0 - 25);
+        RenderTexture(RenderText(x0_str, "BaskervilleBoldItalic.ttf", color, 24, ren), ren, x0 + 5, y0); // первое значение на оси х
+        RenderTexture(RenderText(y0_str, "BaskervilleBoldItalic.ttf", color, 24, ren), ren, x0 - 15, y0 - 25); // первое значение на оси y
     }
 
-    int i = x0 + x_div;
+    int i = x0 + x_div; // данный блок (до конца цикла while) рисует деления оси х с подписями
     double div = x1.second;
     double r = x1.first.first * std::pow(10, x1.first.second);
     r+=div;
@@ -109,7 +105,7 @@ void DrawCoord(SDL_Renderer* ren, int x0, int y0, int x_div, int y_div, const st
         i += x_div;
     }
 
-    i = y0;
+    i = y0;  // данный блок (до конца цикла while) рисует деления оси y с подписями
     SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
     SDL_RenderDrawLine(ren, 20, i + y_div, SCREEN_WIDTH - 80, i + y_div);
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
@@ -136,13 +132,6 @@ void DrawCoord(SDL_Renderer* ren, int x0, int y0, int x_div, int y_div, const st
         r+=div;
     }
 
-    /*for (int i = 0; i <= SCREEN_HEIGHT; i +=5 ) {
-        SDL_RenderDrawLine(ren, 0, i, SCREEN_WIDTH, i);
-    }
-
-    for (int i = 0; i <= SCREEN_WIDTH; i +=5 ) {
-        SDL_RenderDrawLine(ren, i, 0, i, SCREEN_HEIGHT);
-    }*/
 }
 
 void DrawGraphic(SDL_Renderer* ren, const std::vector<double>& data_x, const std::vector<double>& data_y, const std::string & x_name,
@@ -187,7 +176,7 @@ void DrawGraphic(SDL_Renderer* ren, const std::vector<double>& data_x, const std
 
     for(size_t i = 0; i < sz; i++){
         DrawFatPoint(ren, 40 + (int)((data_x[i] - x1.first*std::pow(10, x1.second)) * scale_factor_x),
-                    SCREEN_HEIGHT - 80 - (int)(scale_factor_y * (data_y[i] - y1.first*std::pow(10, y1.second))));
+                    SCREEN_HEIGHT - 80 - (int)(scale_factor_y * (data_y[i] - y1.first*std::pow(10, y1.second)))); // точки графика
     }
 
     double a = v.GetA();
@@ -196,7 +185,7 @@ void DrawGraphic(SDL_Renderer* ren, const std::vector<double>& data_x, const std
     int   y11 = SCREEN_HEIGHT - 80 - (int)(scale_factor_y * ((a * (x1.first*std::pow(10, x1.second) - 20 / scale_factor_x) + b) - y1.first*std::pow(10, y1.second)));
     int   y22 = SCREEN_HEIGHT - 80 - (int)(scale_factor_y * ((a * x2 + b) - y1.first*std::pow(10, y1.second)));
 
-    DrawFatLine(ren, 20, y11, 40 + (int)((x2 - x1.first*std::pow(10, x1.second)) * scale_factor_x), y22);
+    DrawFatLine(ren, 20, y11, 40 + (int)((x2 - x1.first*std::pow(10, x1.second)) * scale_factor_x), y22); // прямая по мнк
     SDL_Color color = {0, 0, 0, 0};
     if(name != "") RenderTexture(RenderText(name,  "BaskervilleBoldItalic.ttf", color, 24, ren), ren, SCREEN_WIDTH / 2, 10);
 }
