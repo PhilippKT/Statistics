@@ -1,6 +1,8 @@
 #include<iostream>
 #include<vector>
 #include<cmath>
+#include<algorithm>
+#include <cstdlib>
 
 double Medium(const std::vector<double>& data);
 double Dispersion(const std::vector<double>& data);
@@ -9,8 +11,81 @@ double Maximum(const std::vector<double>& data);
 double Covariance(const std::vector<double>& data_x, const std::vector<double>& data_y);
 double Correlation(const std::vector<double>& data_x, const std::vector<double>& data_y);
 
+class Segment;
+template <class>
+class Selecter;
 class Variable;
 class DoubleVariable;
+
+class Segment{
+private:
+    double lb, rb;
+public:
+    Segment(double lb, double rb): lb(lb), rb(rb){}
+    bool Contains(double x){
+        if ((x >= lb) and (x <= rb)){
+            return true;
+        } else{
+            return false;
+        }
+    }
+    double RightBorder(){
+        return rb;
+    }
+    double LeftBorder(){
+        return lb;
+    }
+};
+
+template <class TCmp=std::less<double>>
+class Selecter{
+private:
+    std::vector<double> data;
+    TCmp cmp;
+    Segment Partition(uint32_t l, uint32_t r){
+        uint32_t support_i = l + rand() % (r - l + 1);
+        double support_el = data[support_i];
+        uint32_t col = 0; // Êîëè÷åñòâî îïîðíûõ ýëåìåíòîâ ìèíóñ 1.
+        while(l < r){
+            while ( cmp(data[l], support_el) and (data[l] != support_el) ){
+                l++;
+            }
+            while ( cmp(support_el, data[r]) and (data[r] != support_el) ){
+                r--;
+            }
+            if (l == r){
+                break;
+            }
+            if (data[l] == data[r]){ // Ýòî âîçìîæíî òîëüêî â ñëó÷àå data[l] == data[r] == support_el.
+                col++;  //  /Îïåðàöèÿ ñäâèãà âëåâî. (ïðîñòî èãíîðèðóåì ýëåìåíòû == support_el) (ó íàñ l < r)
+                r--;    //  \Â êîíöå ìû ïîëó÷èì ðàçáèòûé ìàññèâ; â ëåâîé ÷àñòè îò îïîðíîãî ýëåìåíòà(support_el) ýëåìåíòû áóäóò > support_el; â ïðàâîé ÷àñòè -- <= support_el.
+            } else{
+                std::swap(data[l], data[r]);
+            }
+        }
+        return Segment(l + 1, l + 1 + col);  //  Âûðàæåíî ÷åðåç l, ò.ê. ñäâèãàëè âëåâî. ((l+1) - íàèìåíüøàÿ ñòàòèñòèêà îïîðíîãî ýëåìåíòà, åñëè îí íå åäèíñòâåííûé; (l+1+col) -- íàèáîëüøàÿ)
+    }
+public:
+    Selecter(){};
+    Selecter(std::vector<double> data): data(data){}
+    double QuickSelect(uint32_t k, uint32_t l, uint32_t r){
+        Segment midseg = Partition(l, r);
+        double mid = midseg.LeftBorder();
+        if (midseg.Contains(k)){
+            return data[mid - 1];
+        }
+        if (k < mid){
+            return QuickSelect(k, l, mid - 2);
+        }
+        if (k > mid){
+            return QuickSelect(k, mid, r);
+        }
+    }
+    double QuickSelect(uint32_t k){
+        return QuickSelect(k, 0, data.size() - 1);
+    }
+    friend Variable;
+};
 
 class Variable{
 private:
@@ -26,6 +101,11 @@ public:
     Variable(const std::vector<double>& data);
 
     const std::vector<double>& GetData() const;
+    std::vector<double> GetSortedUpData() const;
+    std::vector<double> GetSortedDownData() const;
+    double GetAscendingOrderStatistic(int32_t k); // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
+    double GetDescendingOrderStatistic(int32_t k); // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
+  
     double GetMedium() const;
     double GetDispersion() const;
     double GetMinimum() const;
@@ -42,14 +122,16 @@ class DoubleVariable{
     size_t size;
     mutable std::pair<bool, double> covariance;
     mutable std::pair<bool, double> correlation;
-    mutable std::pair<bool, double> a, b; // ������������ � �������� ����������� y = a*x + b
-    mutable std::pair<bool, double> a_err, b_err; // �� �����������
+    mutable std::pair<bool, double> a, b; // êîýôôèöèåíòû â ëèíåéíîì ïðèáëèæåíèè y = a*x + b
+    mutable std::pair<bool, double> a_err, b_err; // èõ ïîãðåøíîñòè
 public:
     DoubleVariable();
     DoubleVariable(const std::vector<double>& data_x, const std::vector<double>& data_y);
     DoubleVariable(Variable* x, Variable* y);
 
     const std::vector<double>& GetDataX() const;
+    std::vector<double> GetSortedUpDataX() const;
+    std::vector<double> GetSortedDownDataX() const;
     double GetMediumX() const;
     double GetDispersionX() const;
     double GetMinimumX() const;
@@ -124,7 +206,6 @@ double Covariance(const std::vector<double>& data_x, const std::vector<double>& 
     }
 }
 
-
 double Correlation(const std::vector<double>& data_x, const std::vector<double>& data_y){
     return Covariance(data_x, data_y) / std::sqrt(Dispersion(data_x) * Dispersion(data_y));
 }
@@ -150,6 +231,30 @@ Variable::Variable(const std::vector<double>& data) : data(data){
 
 const std::vector<double>&Variable::GetData() const{
     return data;
+}
+
+std::vector<double> Variable::GetSortedUpData() const{
+    std::vector<double> v = data;
+    std::sort(v.begin(), v.end());
+    return v;
+}
+
+std::vector<double> Variable::GetSortedDownData() const{
+    std::vector<double> v = data;
+    std::sort(v.rbegin(), v.rend());
+    return v;
+}
+
+double Variable::GetAscendingOrderStatistic(int32_t k){  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
+    if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
+    Selecter<std::less<double>> up(data);
+    return up.QuickSelect(k);
+}
+
+double Variable::GetDescendingOrderStatistic(int32_t k){  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
+    if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
+    Selecter<std::greater<double>> down(data);
+    return down.QuickSelect(k);;
 }
 
 double Variable::GetMedium() const{
@@ -238,6 +343,14 @@ const std::vector<double>&DoubleVariable::GetDataX() const{
     return x->GetData();
 }
 
+std::vector<double> DoubleVariable::GetSortedUpDataX() const{
+    return x->GetSortedUpData();
+}
+
+std::vector<double> DoubleVariable::GetSortedDownDataX() const{
+    return x->GetSortedDownData();
+}
+
 double DoubleVariable::GetMediumX() const{
     return x->GetMedium();
 }
@@ -258,9 +371,26 @@ double DoubleVariable::GetSumX() const{
     return x->GetSum();
 }
 
+double DoubleVariable::GetAscendingOrderStatisticX(int32_t k){
+    return x->GetAscendingOrderStatistic(k);
+}
+
+double DoubleVariable::GetDescendingOrderStatisticX(int32_t k){
+    return x->GetDescendingOrderStatistic(k);
+}
+
 const std::vector<double>&DoubleVariable::GetDataY() const{
     return y->GetData();
 }
+
+std::vector<double> DoubleVariable::GetSortedUpDataY() const{
+    return y->GetSortedUpData();
+}
+
+std::vector<double> DoubleVariable::GetSortedDownDataY() const{
+    return y->GetSortedDownData();
+}
+
 
 double DoubleVariable::GetMediumY() const{
     return y->GetMedium();
@@ -280,6 +410,14 @@ double DoubleVariable::GetMinimumY() const{
 
 double DoubleVariable::GetSumY() const{
     return y->GetSum();
+}
+
+double DoubleVariable::GetAscendingOrderStatisticY(int32_t k){
+    return y->GetAscendingOrderStatistic(k);
+}
+
+double DoubleVariable::GetDescendingOrderStatisticY(int32_t k){
+    return y->GetDescendingOrderStatistic(k);
 }
 
 size_t DoubleVariable::GetSize() const{
