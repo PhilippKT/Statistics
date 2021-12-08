@@ -11,30 +11,11 @@ double Maximum(const std::vector<double>& data);
 double Covariance(const std::vector<double>& data_x, const std::vector<double>& data_y);
 double Correlation(const std::vector<double>& data_x, const std::vector<double>& data_y);
 
-//template <class>
-//class LSM;
 class Segment;
 template <class>
 class Selecter;
 class Variable;
 class DoubleVariable;
-
-/*class Function{
-private:
-    std::vector<double> params;
-public:
-    Function()
-};
-
-template <TFunction>
-class LSM{  // Least Squares Method
-private:
-    DoubleVariable data;
-    TFunction f;
-public:
-    LSM(DoubleVariable data): data(data) {}
-    std::vector<double> GetParams()
-};*/
 
 class Segment{
 private:
@@ -120,8 +101,8 @@ public:
     Variable(std::vector<double> data);
 
     const std::vector<double>& GetData() const;
-    const std::vector<double>& GetSortedUpData();
-    const std::vector<double>& GetSortedDownData();
+    std::vector<double> GetSortedUpData() const;
+    std::vector<double> GetSortedDownData() const;
     double GetAscendingOrderStatistic(int32_t k); // k-ая порядковая статистика по возрастанию (начиная с 1)
     double GetDescendingOrderStatistic(int32_t k); // k-ая порядковая статистика по убыванию (начиная с 1)
     double GetMedium();
@@ -148,8 +129,8 @@ public:
     DoubleVariable(Variable* x, Variable* y);
 
     const std::vector<double>& GetDataX() const;
-    const std::vector<double>& GetSortedUpDataX();
-    const std::vector<double>& GetSortedDownDataX();
+    std::vector<double> GetSortedUpDataX() const;
+    std::vector<double> GetSortedDownDataX() const;
     double GetMediumX();
     double GetDispersionX();
     double GetMinimumX();
@@ -159,8 +140,8 @@ public:
     double GetDescendingOrderStatisticX(int32_t k);
 
     const std::vector<double>& GetDataY() const;
-    const std::vector<double>& GetSortedUpDataY();
-    const std::vector<double>& GetSortedDownDataY();
+    std::vector<double> GetSortedUpDataY() const;
+    std::vector<double> GetSortedDownDataY() const;
     double GetMediumY();
     double GetDispersionY();
     double GetMinimumY();
@@ -257,13 +238,13 @@ const std::vector<double>&Variable::GetData() const{
     return data;
 }
 
-const std::vector<double>&Variable::GetSortedUpData(){
+std::vector<double> Variable::GetSortedUpData() const{
     std::vector<double> v = data;
     std::sort(v.begin(), v.end());
     return v;
 }
 
-const std::vector<double>&Variable::GetSortedDownData(){
+std::vector<double> Variable::GetSortedDownData() const{
     std::vector<double> v = data;
     std::sort(v.rbegin(), v.rend());
     return v;
@@ -367,11 +348,11 @@ const std::vector<double>&DoubleVariable::GetDataX() const{
     return x->GetData();
 }
 
-const std::vector<double>&DoubleVariable::GetSortedUpDataX(){
+std::vector<double> DoubleVariable::GetSortedUpDataX() const{
     return x->GetSortedUpData();
 }
 
-const std::vector<double>&DoubleVariable::GetSortedDownDataX(){
+std::vector<double> DoubleVariable::GetSortedDownDataX() const{
     return x->GetSortedDownData();
 }
 
@@ -407,11 +388,11 @@ const std::vector<double>&DoubleVariable::GetDataY() const{
     return y->GetData();
 }
 
-const std::vector<double>&DoubleVariable::GetSortedUpDataY(){
+std::vector<double> DoubleVariable::GetSortedUpDataY() const{
     return y->GetSortedUpData();
 }
 
-const std::vector<double>&DoubleVariable::GetSortedDownDataY(){
+std::vector<double> DoubleVariable::GetSortedDownDataY() const{
     return y->GetSortedDownData();
 }
 
@@ -490,4 +471,3 @@ double DoubleVariable::GetBError(){
     b_err.first = true;
     return b_err.second;
 }
-
