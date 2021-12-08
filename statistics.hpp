@@ -11,11 +11,30 @@ double Maximum(const std::vector<double>& data);
 double Covariance(const std::vector<double>& data_x, const std::vector<double>& data_y);
 double Correlation(const std::vector<double>& data_x, const std::vector<double>& data_y);
 
+//template <class>
+//class LSM;
 class Segment;
 template <class>
 class Selecter;
 class Variable;
 class DoubleVariable;
+
+/*class Function{
+private:
+    std::vector<double> params;
+public:
+    Function()
+};
+
+template <TFunction>
+class LSM{  // Least Squares Method
+private:
+    DoubleVariable data;
+    TFunction f;
+public:
+    LSM(DoubleVariable data): data(data) {}
+    std::vector<double> GetParams()
+};*/
 
 class Segment{
 private:
@@ -89,13 +108,8 @@ public:
 
 class Variable{
 private:
-    Selecter<std::less<double>> up;
-    Selecter<std::greater<double>> down;
     size_t size;
     std::vector<double> data;
-    std::vector<double> data_sorted_up = {};
-    std::vector<double> data_sorted_down = {};
-    std::vector<std::pair<bool, double>> data_ascending_order_statistics; // уже посчитанные порядковые статистики по возрастанию. Причём выгоднее становится сначала отсортировать данные(n = size), а потом взять m статистик (nlogn + m), чем просто взять m статистик QuickSelect-ом (n * O(n)), когда количество запросов статистик m достигает: nm > nlogn + m <=> m > (1+1/(n-1))*logn ~ logn (при n >> 1)
     std::pair<bool, double> medium;
     std::pair<bool, double> dispersion;
     std::pair<bool, double> minimum;
@@ -230,17 +244,13 @@ Variable::Variable(){
     summ.first = false;
 }
 
-Variable::Variable(std::vector<double> data) : data(data), up(data), down(data){
+Variable::Variable(std::vector<double> data) : data(data){
     size = data.size();
     medium.first = false;
     dispersion.first = false;
     minimum.first = false;
     maximum.first = false;
     summ.first = false;
-    for(uint32_t i = 0; i < size; ++i){
-        std::pair<bool, double> p(false, 0);
-        data_ascending_order_statistics.push_back(p);
-    }
 }
 
 const std::vector<double>&Variable::GetData() const{
@@ -248,71 +258,27 @@ const std::vector<double>&Variable::GetData() const{
 }
 
 const std::vector<double>&Variable::GetSortedUpData(){
-    if (data_sorted_up.size() > 0){
-        return data_sorted_up;
-    }
-    if (data_sorted_down.size() > 0){
-        std::vector<double> v;
-        for (uint32_t i = size - 1; i >= 0; i--){
-            v.push_back(data_sorted_down[i]);
-        }
-        data_sorted_up = v;
-        return data_sorted_up;
-    }
     std::vector<double> v = data;
     std::sort(v.begin(), v.end());
-    data_sorted_up = v;
-    return data_sorted_up;
+    return v;
 }
 
 const std::vector<double>&Variable::GetSortedDownData(){
-    if (data_sorted_down.size() > 0){
-        return data_sorted_down;
-    }
-    if (data_sorted_up.size() > 0){
-        std::vector<double> v;
-        for (uint32_t i = size - 1; i >= 0; i--){
-            v.push_back(data_sorted_up[i]);
-        }
-        data_sorted_down = v;
-        return data_sorted_down;
-    }
     std::vector<double> v = data;
     std::sort(v.rbegin(), v.rend());
-    data_sorted_down = v;
-    return data_sorted_down;
+    return v;
 }
 
 double Variable::GetAscendingOrderStatistic(int32_t k){  // k-ая порядковая статистика по возрастанию (начиная с 1)
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
-    if (data_ascending_order_statistics[k - 1].first == true){
-        return data_ascending_order_statistics[k - 1].second;
-    }
-    if (data_sorted_up.size() > 0){
-        return data_sorted_up[k - 1];
-    }
-    if (data_sorted_down.size() > 0){
-        return data_sorted_down[size - k];
-    }
-    data_ascending_order_statistics[k - 1].first = true;
-    data_ascending_order_statistics[k - 1].second = up.QuickSelect(k);
-    return data_ascending_order_statistics[k - 1].second;
+    Selecter<std::less<double>> up(data);
+    return up.QuickSelect(k);
 }
 
 double Variable::GetDescendingOrderStatistic(int32_t k){  // k-ая порядковая статистика по убыванию (начиная с 1)
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
-    if (data_ascending_order_statistics[size - k].first == true){
-        return data_ascending_order_statistics[size - k].second;
-    }
-    if (data_sorted_up.size() > 0){
-        return data_sorted_up[size - k];
-    }
-    if (data_sorted_down.size() > 0){
-        return data_sorted_down[k - 1];
-    }
-    data_ascending_order_statistics[size - k].first = true;
-    data_ascending_order_statistics[size - k].second = down.QuickSelect(k);
-    return data_ascending_order_statistics[size - k].second;
+    Selecter<std::greater<double>> down(data);
+    return down.QuickSelect(k);;
 }
 
 double Variable::GetMedium(){
@@ -524,3 +490,4 @@ double DoubleVariable::GetBError(){
     b_err.first = true;
     return b_err.second;
 }
+
