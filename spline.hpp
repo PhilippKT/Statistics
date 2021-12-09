@@ -1,12 +1,12 @@
 #include <math.h>
 
-static int Spline(int n, int end1, int end2, double slope1, double slope2,
+int Spline(int n, int end1, int end2, double slope1, double slope2,
 					double x[], double y[], double b[], double c[], double d[], int *iflag);
-static double Seval(int ni, double u, int n, double x[], double y[], double b[], double c[], double d[], int *last);
+double Seval(int ni, double u, int n, double x[], double y[], double b[], double c[], double d[], int *last);
 void SPL(int n, double *x, double *y, int ni, double *xi, double *yi);
 
 
-static int Spline(	int n, int end1, int end2,
+int Spline(	int n, int end1, int end2,
 					double slope1, double slope2,
 					double x[], double y[],
 					double b[], double c[], double d[],
@@ -99,7 +99,7 @@ LeaveSpline:
 }
 
 
-static double Seval(int ni, double u,
+double Seval(int ni, double u,
 					int n, double x[], double y[],
 					double b[], double c[], double d[],
 					int *last)
