@@ -214,7 +214,7 @@ void DrawGraphic(SDL_Renderer* ren, const std::vector<double>& data_x, const std
 
     DrawFatLine(ren, 20, y11, 40 + (int)((x2 - x1.first*std::pow(10, x1.second)) * scale_factor_x), y22); // прямая по мнк
     SDL_SetRenderDrawColor(ren, 250, 250, 250, 0);;
-    SDL_Rect rect1 = {0, 0, SCREEN_WIDTH, 15};
+    SDL_Rect rect1 = {0, 0, SCREEN_WIDTH, 12};
     SDL_RenderFillRect(ren, &rect1);
     rect1 = {0, SCREEN_HEIGHT - 15, SCREEN_WIDTH, 15};
     SDL_RenderFillRect(ren, &rect1);

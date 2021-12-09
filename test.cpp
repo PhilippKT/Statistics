@@ -13,6 +13,15 @@ int main (int arhc, char ** argv) {
     SDL_RenderClear(ren);
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
+    DoubleVariable v({1110, 1129, 1141, 1153, 1167, 1188}, {38, 49, 39, 48, 54, 72});
+    std::cout << "Covariance = " << v.GetCovariance() << '\n';
+    std::cout << "Correlation = " << v.GetCorrelation() << '\n';
+    std::cout << "DispersionX = " << v.GetDispersionX() << '\n';
+    std::cout << "DispersionY = " << v.GetDispersionY() << '\n';
+    std::cout << "y = ax + b" << '\n';
+    std::cout << "a = (" << v.GetA() << " +/- " << v.GetAError() << ")" << '\n';
+    std::cout << "b = (" << v.GetB() << " +/- " << v.GetBError() << ")" << '\n';
+
     DrawGraphic(ren, {1110, 1129, 1141, 1153, 1167, 1188}, {38, 49, 39, 48, 54, 72}, "B, Gs", "H, Gs", "Graphic H(B)", 1);
 
 
@@ -36,17 +45,3 @@ int main (int arhc, char ** argv) {
     return 0;
 }
 
-
-/*int main()
-{
-    DoubleVariable v({1, 2, 3, 4, 5, 6, 7, 8, 9}, {1, 2, 3, 4, 5, 6, 7, 8, 9});
-    std::cout << v.GetCovariance() << '\n';
-    std::cout << v.GetCorrelation() << '\n';
-    std::cout << v.GetDispersionX() << '\n';
-    std::cout << v.GetDispersionY() << '\n';
-    std::cout << v.GetCovariance() << '\n';
-    std::cout << "y = ax + b" << '\n';
-    std::cout << "a = (" << v.GetA() << " +/- " << v.GetAError() << ")" << '\n';
-    std::cout << "b = (" << v.GetB() << " +/- " << v.GetBError() << ")" << '\n';
-    return 0;
-}*/

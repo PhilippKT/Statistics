@@ -4,6 +4,7 @@
 #include<algorithm>
 #include <cstdlib>
 
+
 double Medium(const std::vector<double>& data);
 double Dispersion(const std::vector<double>& data);
 double Minimum(const std::vector<double>& data);
@@ -11,11 +12,13 @@ double Maximum(const std::vector<double>& data);
 double Covariance(const std::vector<double>& data_x, const std::vector<double>& data_y);
 double Correlation(const std::vector<double>& data_x, const std::vector<double>& data_y);
 
+
 class Segment;
 template <class>
 class Selecter;
 class Variable;
 class DoubleVariable;
+
 
 class Segment{
 private:
@@ -37,6 +40,7 @@ public:
     }
 };
 
+
 template <class TCmp=std::less<double>>
 class Selecter{
 private:
@@ -45,7 +49,7 @@ private:
     Segment Partition(uint32_t l, uint32_t r){
         uint32_t support_i = l + rand() % (r - l + 1);
         double support_el = data[support_i];
-        uint32_t col = 0; // Êîëè÷åñòâî îïîðíûõ ýëåìåíòîâ ìèíóñ 1.
+        uint32_t col = 0; // Количество опорных элементов минус 1.
         while(l < r){
             while ( cmp(data[l], support_el) and (data[l] != support_el) ){
                 l++;
@@ -56,14 +60,14 @@ private:
             if (l == r){
                 break;
             }
-            if (data[l] == data[r]){ // Ýòî âîçìîæíî òîëüêî â ñëó÷àå data[l] == data[r] == support_el.
-                col++;  //  /Îïåðàöèÿ ñäâèãà âëåâî. (ïðîñòî èãíîðèðóåì ýëåìåíòû == support_el) (ó íàñ l < r)
-                r--;    //  \Â êîíöå ìû ïîëó÷èì ðàçáèòûé ìàññèâ; â ëåâîé ÷àñòè îò îïîðíîãî ýëåìåíòà(support_el) ýëåìåíòû áóäóò > support_el; â ïðàâîé ÷àñòè -- <= support_el.
+            if (data[l] == data[r]){ // Это возможно только в случае data[l] == data[r] == support_el.
+                col++;  //  /Операция сдвига влево. (просто игнорируем элементы == support_el) (у нас l < r)
+                r--;    //  \В конце мы получим разбитый массив; в левой части от опорного элемента(support_el) элементы будут > support_el; в правой части -- <= support_el.
             } else{
                 std::swap(data[l], data[r]);
             }
         }
-        return Segment(l + 1, l + 1 + col);  //  Âûðàæåíî ÷åðåç l, ò.ê. ñäâèãàëè âëåâî. ((l+1) - íàèìåíüøàÿ ñòàòèñòèêà îïîðíîãî ýëåìåíòà, åñëè îí íå åäèíñòâåííûé; (l+1+col) -- íàèáîëüøàÿ)
+        return Segment(l + 1, l + 1 + col);  //  Выражено через l, т.к. сдвигали влево. ((l+1) - наименьшая статистика опорного элемента, если он не единственный; (l+1+col) -- наибольшая)
     }
 public:
     Selecter(){};
@@ -103,8 +107,8 @@ public:
     const std::vector<double>& GetData() const;
     std::vector<double> GetSortedUpData() const;
     std::vector<double> GetSortedDownData() const;
-    double GetAscendingOrderStatistic(int32_t k) const; // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
-    double GetDescendingOrderStatistic(int32_t k)const; // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
+    double GetAscendingOrderStatistic(int32_t k) const; // k-ая порядковая статистика по возрастанию (начиная с 1)
+    double GetDescendingOrderStatistic(int32_t k)const; // k-ая порядковая статистика по убыванию (начиная с 1)
 
     double GetMedium() const;
     double GetDispersion() const;
@@ -122,8 +126,8 @@ class DoubleVariable{
     size_t size;
     mutable std::pair<bool, double> covariance;
     mutable std::pair<bool, double> correlation;
-    mutable std::pair<bool, double> a, b; // êîýôôèöèåíòû â ëèíåéíîì ïðèáëèæåíèè y = a*x + b
-    mutable std::pair<bool, double> a_err, b_err; // èõ ïîãðåøíîñòè
+    mutable std::pair<bool, double> a, b; // коэффициенты в линейном приближении y = a*x + b
+    mutable std::pair<bool, double> a_err, b_err; // их погрешности
 public:
     DoubleVariable();
     DoubleVariable(const std::vector<double>& data_x, const std::vector<double>& data_y);
@@ -251,13 +255,13 @@ std::vector<double> Variable::GetSortedDownData() const{
     return v;
 }
 
-double Variable::GetAscendingOrderStatistic(int32_t k) const{  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî âîçðàñòàíèþ (íà÷èíàÿ ñ 1)
+double Variable::GetAscendingOrderStatistic(int32_t k) const{
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
     Selecter<std::less<double>> up(data);
     return up.QuickSelect(k);
 }
 
-double Variable::GetDescendingOrderStatistic(int32_t k) const{  // k-àÿ ïîðÿäêîâàÿ ñòàòèñòèêà ïî óáûâàíèþ (íà÷èíàÿ ñ 1)
+double Variable::GetDescendingOrderStatistic(int32_t k) const{
     if ((k < 1) or (k > size)) throw std::out_of_range("The number of order statistic must be from 1 to the size of data!");
     Selecter<std::greater<double>> down(data);
     return down.QuickSelect(k);;
