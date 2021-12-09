@@ -134,6 +134,7 @@ public:
     DoubleVariable(Variable* x, Variable* y);
 
     const std::vector<double>& GetDataX() const;
+    DoubleVariable GetFilteredData(uint32_t k) const; // k - к-т фильтрации (p(point_bad, point_nearest_to_this) > k * <p(point, point_nearest_to_this)>(среднее))
     std::vector<double> GetSortedUpDataX() const;
     std::vector<double> GetSortedDownDataX() const;
     std::vector<double> GetSortedUpDataY() const;
@@ -476,4 +477,29 @@ double DoubleVariable::GetBError() const{
     b_err.second = GetAError() * std::sqrt(GetDispersionX());
     b_err.first = true;
     return b_err.second;
+}
+
+DoubleVariable DoubleVariable::GetFilteredData(uint32_t k=2) const{
+    std::vector<double> data_x0 = x->GetData(), data_y0 = y->GetData();
+    if (size < 2){
+        return DoubleVariable(data_x0, data_y0);
+    } else{
+        std::vector<double> data_x, data_y;
+        double a_ = GetA();
+        double b_ = GetB();
+        double med_p, sum_p = 0;
+        std::vector<double> p; // до прямой
+        for (uint32_t i = 0; i < size; ++i){
+            p.push_back( abs( data_y0[i] - a_*((data_x0)[i]) - b_ ) / std::sqrt(a_*a_ + b_*b_) );
+            sum_p += p[i];
+        }
+        med_p = sum_p / size;
+        for (uint32_t i = 0; i < size; ++i){
+            if (p[i] < k * med_p){
+                data_x.push_back(data_x0[i]);
+                data_y.push_back(data_y0[i]);
+            }
+        }
+        return DoubleVariable(data_x, data_y);
+    }
 }
